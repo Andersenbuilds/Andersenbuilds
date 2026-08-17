@@ -12,6 +12,7 @@ Branch: `claude/directory-save-location-nle28s`. This is also the repo's **defau
 
 ```
 HANDOFF.md                          this file
+INSTALL.md                          how to install the skill, no terminal
 docs/how-my-setup-works.md          notes on git, repos, what persists
 skills/project-kickoff/
   SKILL.md                          the skill itself
@@ -32,11 +33,7 @@ It's the complement to the built-in `/init`, which documents a codebase that alr
 
 Not done. The only install so far was inside a cloud container, which is gone.
 
-```
-cp -r skills/project-kickoff ~/.claude/skills/
-```
-
-Then `/project-kickoff` is available in every folder, permanently. Verify with `ls ~/.claude/skills/project-kickoff`.
+See `INSTALL.md` — it has the full no-terminal path. Short version: the skill lives in Malthe's own `skills` folder and is symlinked into `~/.claude/skills/`, so there's one copy, edited in place, live in Claude Code immediately.
 
 ### 2. Create a dedicated skills repo
 
