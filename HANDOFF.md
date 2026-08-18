@@ -2,6 +2,7 @@
 
 State of this repo and what's still open. Rewritten in place — newest entry on top.
 
+- 2026-08-16 — Renamed the branch to `main` and pushed it. GitHub's default branch still points at the old name — see open item 3. Recorded the outstanding `playground` repo request and the existing `Howto101` repo, which were only in chat.
 - 2026-08-16 — Added `docs/obs-longform-setup.md` (researched, untested). Aligned the skill README with `INSTALL.md`, which contradicted it on install method.
 - 2026-08-16 — Built the `project-kickoff` skill and wrote `docs/how-my-setup-works.md`. Both committed. Skill is not yet installed on the laptop, and the dedicated skills repo does not exist yet.
 
@@ -9,7 +10,11 @@ State of this repo and what's still open. Rewritten in place — newest entry on
 
 ## Current state
 
-Branch: `claude/directory-save-location-nle28s`. This is also the repo's **default branch** — the repo was empty before this work, so there is no `main`.
+Branch: `main`.
+
+`claude/directory-save-location-nle28s` still exists on GitHub, points at the identical commit, and is still marked as the repo's **default branch**. Clearing that is open item 3.
+
+Other repos on this account: `Andersenbuilds/Howto101` (private, last pushed 2026-08-11) — the "How to 101" app, separate from this work.
 
 ```
 HANDOFF.md                          this file
@@ -53,18 +58,22 @@ Commit it there. Don't try to carry the git history across — it's two commits 
 
 Leave `docs/how-my-setup-works.md` here. It's notes about the setup, not a skill; the skills repo shouldn't become a junk drawer.
 
-### 3. Rename the default branch to `main` (optional)
+### 3. Finish the branch rename
 
-Cosmetic. `claude/directory-save-location-nle28s` works fine but is an odd name for a repo's permanent default. Renameable from GitHub's branch settings, or:
+`main` exists and is pushed. Two steps left, neither doable from a cloud session — changing a repo's default branch needs GitHub settings access the connected app doesn't have.
 
-```
-git branch -m claude/directory-save-location-nle28s main
-git push -u origin main
-```
+1. On github.com: `Settings → General → Default branch`, switch to `main`.
+2. Then delete `claude/directory-save-location-nle28s`. GitHub refuses to delete a default branch, so step 1 must come first.
 
-Then change the default in GitHub settings and delete the old remote branch.
+Both branches point at the same commit, so nothing is at risk either way — this is tidying, not recovery.
 
-### 4. Memory files (open question, not a task)
+### 4. The `playground` repo, never created
+
+Asked for early on: a private personal repo called `playground`. Never created — the cloud session's GitHub App lacks repo-creation permission (403 on personal, 404 on org), and there's no `gh` CLI. Still outstanding, and trivial from a local session or github.com.
+
+Worth deciding whether `playground` and the skills repo in item 2 are the same thing or two separate repos.
+
+### 5. Memory files (open question, not a task)
 
 `AB_COLLECTED_KNOWLEDGE.md` and the other memory files live in claude.ai Project knowledge, so git doesn't reach them and Claude Code can't read them. Moving them into a repo would mean maintaining them somewhere both can see. Real workflow change, not a free upgrade — undecided.
 
