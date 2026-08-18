@@ -6,31 +6,23 @@ Covers four project types: software, content/video, automation pipelines, and re
 
 ## Installing it
 
-The folder is self-contained — nothing in it references an absolute path or the repo it was written in. Copy it wherever you want it and it works.
+The folder is self-contained — nothing in it references an absolute path or the repo it was written in. It works wherever you put it.
 
-**For one machine, all projects:**
+Claude Code reads skills from `~/.claude/skills/`. Keep the real folder wherever you edit it and symlink it in, so there's only ever one copy:
+
+```
+ln -s /path/to/project-kickoff ~/.claude/skills/project-kickoff
+```
+
+Edits then go live immediately, with nothing to keep in sync. If symlinking is awkward — Windows sometimes needs elevated permissions — copy it instead and re-copy after each change:
 
 ```
 cp -r project-kickoff ~/.claude/skills/
 ```
 
-**For a single project only:**
+Either way, start a new Claude Code session and run `/project-kickoff`. It also triggers on its own when you describe something you are about to start building.
 
-```
-cp -r project-kickoff /path/to/project/.claude/skills/
-```
-
-Then start a new Claude Code session and run `/project-kickoff`. It also triggers on its own when you describe something you are about to start building.
-
-## Moving it to a skills repo
-
-Copy the whole `project-kickoff/` folder in. To use it from there, either symlink it into `~/.claude/skills/`:
-
-```
-ln -s /path/to/skills-repo/project-kickoff ~/.claude/skills/project-kickoff
-```
-
-or copy it across after each change.
+**For a single project only**, put it in that project's `.claude/skills/` instead. Worth knowing this is usually the wrong choice for this particular skill — it exists to start *new* projects, so an in-repo copy only loads where you don't need it.
 
 ## What's inside
 

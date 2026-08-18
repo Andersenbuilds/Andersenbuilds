@@ -65,10 +65,8 @@ Only relevant when working locally, not on the web.
 
 A symlink is a pointer file. It looks like a normal folder but holds no content — it says "the real thing is over there," and anything reading it gets redirected.
 
-Useful for skills: keep one real copy in a skills repo under git, and put a pointer to it in `~/.claude/skills/`. Edit the file in the repo and the change is live immediately, with no copying and nothing to keep in sync.
-
-```
-ln -s ~/skills-repo/project-kickoff ~/.claude/skills/project-kickoff
-```
+Useful for skills: keep one real copy in a skills folder under git, and put a pointer to it in `~/.claude/skills/`. Edit the file where you keep it and the change is live immediately, with no copying and nothing to keep in sync.
 
 Symlinks are per-machine. Set up once on each computer.
+
+The actual command is in `INSTALL.md` — kept there so it only lives in one place.

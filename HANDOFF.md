@@ -2,6 +2,7 @@
 
 State of this repo and what's still open. Rewritten in place — newest entry on top.
 
+- 2026-08-16 — Added `docs/obs-longform-setup.md` (researched, untested). Aligned the skill README with `INSTALL.md`, which contradicted it on install method.
 - 2026-08-16 — Built the `project-kickoff` skill and wrote `docs/how-my-setup-works.md`. Both committed. Skill is not yet installed on the laptop, and the dedicated skills repo does not exist yet.
 
 ---
@@ -14,6 +15,7 @@ Branch: `claude/directory-save-location-nle28s`. This is also the repo's **defau
 HANDOFF.md                          this file
 INSTALL.md                          how to install the skill, no terminal
 docs/how-my-setup-works.md          notes on git, repos, what persists
+docs/obs-longform-setup.md          OBS settings for 1080p YouTube long-form
 skills/project-kickoff/
   SKILL.md                          the skill itself
   README.md                         install + usage
@@ -32,6 +34,8 @@ It's the complement to the built-in `/init`, which documents a codebase that alr
 ### 1. Install the skill on this machine
 
 Not done. The only install so far was inside a cloud container, which is gone.
+
+Worth knowing why it kept not happening: opening the Claude Code desktop app **resumed the cloud session** rather than starting a local one. Same container, no access to the laptop's filesystem. Starting a genuinely local session is a separate action.
 
 See `INSTALL.md` — it has the full no-terminal path. Short version: the skill lives in Malthe's own `skills` folder and is symlinked into `~/.claude/skills/`, so there's one copy, edited in place, live in Claude Code immediately.
 
