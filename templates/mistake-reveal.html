@@ -1,0 +1,191 @@
+<title>Mistake Reveal</title>
+<style>
+  :root{
+    --page-bg:#FAFAFA;
+    --page-ink:#1A1A1A;
+    --page-warm:#6B6B6B;
+    --page-orange:#C2410C;
+    --page-border: rgba(26,26,26,0.14);
+    --card-bg:#1A1A1A;
+    --card-ink:#FAFAFA;
+    --card-warm:#6B6B6B;
+    --card-orange:#C2410C;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --page-bg:#1A1A1A; --page-ink:#FAFAFA; --page-warm:#9A9A9A; --page-border: rgba(250,250,250,0.16); }
+  }
+  :root[data-theme="dark"]{ --page-bg:#1A1A1A; --page-ink:#FAFAFA; --page-warm:#9A9A9A; --page-border: rgba(250,250,250,0.16); }
+
+  *{ box-sizing: border-box; }
+  body{ background: var(--page-bg); color: var(--page-ink); font-family: "Inter", ui-sans-serif, system-ui, Arial, sans-serif; padding-inline: 20px; padding-block: 40px; }
+  .wrap{ max-width: 640px; margin: 0 auto; }
+
+  .eyebrow{ font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--page-orange); }
+  h1{ font-size: clamp(28px, 5vw, 40px); font-weight: 800; line-height: 1.08; letter-spacing: -0.02em; margin: 10px 0 8px; text-wrap: balance; }
+  .lede{ color: var(--page-warm); font-size: 16px; max-width: 60ch; line-height: 1.55; margin: 0; }
+
+  .stage{ display:flex; flex-direction:column; align-items:center; gap: 16px; margin-top: 36px; }
+  .tag{ font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--page-warm); border: 1px solid var(--page-border); padding: 3px 8px; border-radius: 2px; align-self: flex-start; }
+
+  .frame{ position: relative; aspect-ratio: 9 / 16; max-width: 280px; width: 100%; background: var(--card-bg); border: 1px solid rgba(250,250,250,0.08); overflow: hidden; }
+
+  .beat-index{ position: absolute; top: 6%; left: 10%; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; color: var(--card-warm); }
+
+  .card{ position: absolute; top: 30%; left: 10%; right: 10%; }
+  .kicker{ font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--card-warm); }
+
+  .claim-row{ position: relative; margin-top: 10px; display: inline-block; }
+  .claim{ font-size: 34px; font-weight: 800; color: var(--card-ink); letter-spacing: -0.01em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .strike{ position: absolute; left: 0; top: 50%; height: 4px; width: 100%; background: var(--card-orange); transform: scaleX(0); transform-origin: left; transition: transform 300ms ease-out; }
+
+  .rule{ height: 1px; background: rgba(250,250,250,0.16); margin: 16px 0 14px; transform: scaleX(0); transform-origin: left; transition: transform 300ms ease-out; }
+
+  .actual-kicker{ font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--card-warm); opacity: 0; transform: translateY(6px); transition: opacity 280ms ease-out, transform 280ms ease-out; }
+  .actual{ font-size: 40px; font-weight: 800; color: var(--card-orange); letter-spacing: -0.01em; line-height: 1.05; margin-top: 4px; opacity: 0; transform: translateY(6px); transition: opacity 280ms ease-out, transform 280ms ease-out; font-variant-numeric: tabular-nums; }
+
+  /* payoff -- the one beat allowed to center, per design-system.md's
+     "center only a hero headline or a single CTA block" exception */
+  .payoff{
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 0 12%;
+    opacity: 0; transition: opacity 320ms ease-out;
+  }
+  .payoff-line{ font-size: 30px; font-weight: 800; color: var(--card-ink); line-height: 1.15; letter-spacing: -0.01em; }
+  .payoff-line b{ color: var(--card-orange); }
+
+  @media (prefers-reduced-motion: reduce){
+    .strike, .rule, .actual-kicker, .actual, .payoff{ transition: none !important; }
+  }
+
+  .notes{ margin-top: 44px; border-top: 1px solid var(--page-border); padding-top: 22px; }
+  .notes h3{ font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--page-warm); margin: 0 0 14px; }
+  .steps{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; list-style: none; padding: 0; margin: 0; }
+  .steps li{ display: flex; gap: 10px; }
+  .steps .num{ font-size: 13px; font-weight: 700; color: var(--page-orange); flex: none; }
+  .steps p{ margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--page-ink); }
+  .steps span.dim{ color: var(--page-warm); }
+  .brand-note{ margin-top: 26px; font-size: 12.5px; color: var(--page-warm); line-height: 1.6; border-left: 2px solid var(--page-border); padding-left: 14px; }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+
+<div class="wrap">
+  <p class="eyebrow">ANDERSENBUILDS · OVERLAY KIT</p>
+  <h1>Mistake Reveal</h1>
+  <p class="lede">Three claims, three strikes, one payoff line — ~9s total. Same repo missing caused all three, so the sequence lands on that instead of three unrelated errors.</p>
+
+  <div class="stage">
+    <span class="tag">04 · Hook sequence</span>
+    <div class="frame">
+      <div class="beat-index" id="beatIndex">1 / 3</div>
+      <div class="card" id="card">
+        <div class="kicker" id="kicker">The stack</div>
+        <div class="claim-row">
+          <div class="claim" id="claim">$94/mo</div>
+          <div class="strike" id="strike"></div>
+        </div>
+        <div class="rule" id="rule"></div>
+        <div class="actual-kicker" id="actualKicker">What it actually costs</div>
+        <div class="actual" id="actual">$43/mo</div>
+      </div>
+      <div class="payoff" id="payoff">
+        <div class="payoff-line"><b>Same repo.</b><br>Every time.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h3>Using this clip</h3>
+    <ul class="steps">
+      <li><span class="num">01</span><p><b>Edit the beats</b> — <span class="dim">the `beats` array in the script holds all three claim/correction pairs plus the payoff line. Add, remove, or reorder there.</span></p></li>
+      <li><span class="num">02</span><p><b>Record</b> — <span class="dim">OBS capture at 1080×1920. One full sequence ≈ 9s; let it loop through twice for trim margin.</span></p></li>
+      <li><span class="num">03</span><p><b>Cut</b> — <span class="dim">in CapCut, this is the cold open — cut in right as beat 1's claim appears, cut out just after the payoff line lands.</span></p></li>
+    </ul>
+  </div>
+
+  <p class="brand-note">Same rule as the single-beat version: claim stays off-white/neutral, correction gets the orange "the point" treatment. The payoff line is the one moment allowed to center, per `design-system.md`'s hero-headline exception to left-aligned editorial layout.</p>
+</div>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var beats = [
+    { kicker: 'The stack', claim: '$94/mo', actualKicker: 'What it actually costs', actual: '$43/mo' },
+    { kicker: 'The brand', claim: 'No guide exists', actualKicker: 'It already did', actual: 'Locked since Sept 6' },
+    { kicker: 'The memory', claim: "Git can't reach it", actualKicker: 'It was right there', actual: 'Tracked the whole time' }
+  ];
+
+  var beatIndexEl = document.getElementById('beatIndex');
+  var card = document.getElementById('card');
+  var kicker = document.getElementById('kicker');
+  var claim = document.getElementById('claim');
+  var strike = document.getElementById('strike');
+  var rule = document.getElementById('rule');
+  var actualKicker = document.getElementById('actualKicker');
+  var actual = document.getElementById('actual');
+  var payoff = document.getElementById('payoff');
+
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  function resetCard(){
+    strike.style.transform = 'scaleX(0)';
+    rule.style.transform = 'scaleX(0)';
+    actualKicker.style.opacity = '0'; actualKicker.style.transform = 'translateY(6px)';
+    actual.style.opacity = '0'; actual.style.transform = 'translateY(6px)';
+  }
+
+  if (reduceMotion) {
+    var last = beats[beats.length - 1];
+    kicker.textContent = last.kicker; claim.textContent = last.claim;
+    actualKicker.textContent = last.actualKicker; actual.textContent = last.actual;
+    strike.style.transform = 'scaleX(1)'; rule.style.transform = 'scaleX(1)';
+    actualKicker.style.opacity = '1'; actualKicker.style.transform = 'none';
+    actual.style.opacity = '1'; actual.style.transform = 'none';
+    payoff.style.opacity = '1';
+    return;
+  }
+
+  async function playBeat(i){
+    var b = beats[i];
+    beatIndexEl.textContent = (i + 1) + ' / ' + beats.length;
+    kicker.textContent = b.kicker;
+    claim.textContent = b.claim;
+    actualKicker.textContent = b.actualKicker;
+    actual.textContent = b.actual;
+    resetCard();
+    card.style.opacity = '1';
+    await sleep(420);
+    strike.style.transform = 'scaleX(1)';
+    await sleep(300);
+    rule.style.transform = 'scaleX(1)';
+    await sleep(130);
+    actualKicker.style.opacity = '1'; actualKicker.style.transform = 'none';
+    await sleep(70);
+    actual.style.opacity = '1'; actual.style.transform = 'none';
+    await sleep(720);
+  }
+
+  async function loop(){
+    while (true){
+      card.style.transition = 'opacity 250ms ease-out';
+      payoff.style.opacity = '0';
+      card.style.display = 'block';
+      beatIndexEl.style.opacity = '1';
+
+      for (var i = 0; i < beats.length; i++){
+        await playBeat(i);
+        card.style.opacity = '0';
+        await sleep(220);
+      }
+
+      beatIndexEl.style.opacity = '0';
+      payoff.style.opacity = '1';
+      await sleep(1800);
+      payoff.style.opacity = '0';
+      await sleep(300);
+    }
+  }
+  loop();
+})();
+</script>
