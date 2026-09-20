@@ -2,6 +2,7 @@
 
 State of this repo and what's still open. Rewritten in place — newest entry on top.
 
+- 2026-09-20 — Added `templates/pipeline-overlay.html` (automation flow-diagram overlay: 4 nodes light up in sequence, default labels match the real Sheets → Claude → Make.com → Beehiiv stack). Same design tokens as `overlay-kit.html` by convention, not by a written spec — see open item 6.
 - 2026-09-20 — Added `docs/overlay-ideas.md` (backlog of overlay/animation ideas beyond the two already built).
 - 2026-09-20 — Added `docs/higgsfield-ai-benchmark.md` (researched capability/pricing benchmark) and `templates/overlay-kit.html` (reusable growth-counter + join-CTA motion overlay for shorts — see file header for how to record it into CapCut).
 - 2026-08-16 — Renamed the branch to `main` and pushed it. GitHub's default branch still points at the old name — see open item 3. Recorded the outstanding `playground` repo request and the existing `Howto101` repo, which were only in chat.
@@ -26,6 +27,7 @@ docs/obs-longform-setup.md          OBS settings for 1080p YouTube long-form
 docs/higgsfield-ai-benchmark.md     Higgsfield AI capability/pricing research
 docs/overlay-ideas.md               backlog of overlay/animation ideas
 templates/overlay-kit.html          growth counter + join CTA motion overlay (open in a browser)
+templates/pipeline-overlay.html     automation flow-diagram overlay (open in a browser)
 skills/project-kickoff/
   SKILL.md                          the skill itself
   README.md                         install + usage
@@ -81,6 +83,10 @@ Worth deciding whether `playground` and the skills repo in item 2 are the same t
 ### 5. Memory files (open question, not a task)
 
 `AB_COLLECTED_KNOWLEDGE.md` and the other memory files live in claude.ai Project knowledge, so git doesn't reach them and Claude Code can't read them. Moving them into a repo would mean maintaining them somewhere both can see. Real workflow change, not a free upgrade — undecided.
+
+### 6. No written visual brand guide
+
+There's an `andersenbuilds-brand-voice` skill for writing tone, but nothing pins down colors, type, or visual identity for on-screen assets. The palette and fonts in `templates/overlay-kit.html` and `templates/pipeline-overlay.html` (dark indigo `#130F1C`, coral `#FF7847`, mint `#5FD9B4`, Sora + IBM Plex Mono) were picked to avoid generic AI-generated-design clichés and kept consistent between the two files — not pulled from an approved spec, because there isn't one yet. Fine as a placeholder system; worth locking in a real one before more overlays get built on top of it, so a future rebrand doesn't mean redoing every template.
 
 ## Decisions already made
 

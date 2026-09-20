@@ -1,0 +1,358 @@
+<title>Pipeline Overlay</title>
+<style>
+  :root{
+    --bg:#130F1C;
+    --surface:#1E1930;
+    --frame:#1A1428;
+    --grid-line:#2B2344;
+    --card:#241D3B;
+    --ink:#F4F0E8;
+    --ink-dim:#948DAA;
+    --accent:#FF7847;
+    --accent-ink:#2A0F02;
+    --mint:#5FD9B4;
+    --border:#332A4C;
+    --active-ms: 520ms;
+    --travel-ms: 420ms;
+    --hold-ms: 1300ms;
+    --fade-ms: 350ms;
+  }
+  :root[data-theme="dark"], :root:not([data-theme="light"]){
+    --bg:#130F1C; --surface:#1E1930; --frame:#1A1428; --grid-line:#2B2344; --card:#241D3B;
+    --ink:#F4F0E8; --ink-dim:#948DAA; --border:#332A4C;
+  }
+
+  *{ box-sizing: border-box; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Sora", ui-sans-serif, system-ui, sans-serif;
+    padding-inline: 20px;
+    padding-block: 40px;
+  }
+  .wrap{ max-width: 760px; margin: 0 auto; }
+
+  .eyebrow{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1{
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 8px 0 6px;
+    text-wrap: balance;
+  }
+  .lede{
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 60ch;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .stage{ display:flex; flex-direction:column; align-items:center; gap: 14px; margin-top: 36px; }
+  .tag{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    border: 1px solid var(--border);
+    padding: 3px 7px;
+    border-radius: 999px;
+    align-self: flex-start;
+  }
+
+  .frame{
+    position: relative;
+    aspect-ratio: 9 / 16;
+    max-width: 300px;
+    width: 100%;
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, rgba(255,120,71,0.05), transparent 40%),
+      repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 34px),
+      repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 34px),
+      var(--frame);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.6);
+  }
+
+  .pipeline{
+    position: absolute;
+    top: 12%;
+    bottom: 16%;
+    left: 8%;
+    right: 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: opacity var(--fade-ms) ease;
+  }
+
+  .node{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(26,20,40,0.82);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 9px 10px;
+    backdrop-filter: blur(2px);
+    transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+  .node-icon{
+    flex: none;
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-dim);
+    transition: color .25s ease, background .25s ease;
+  }
+  .node-icon svg{ width: 16px; height: 16px; }
+  .node-text{ flex: 1; min-width: 0; }
+  .node-label{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink-dim);
+    transition: color .25s ease;
+  }
+  .node-sub{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
+    color: var(--ink-dim);
+    opacity: 0.7;
+    margin-top: 1px;
+  }
+  .node-status{
+    flex: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .25s ease, background .25s ease;
+  }
+  .node-status svg{ width: 9px; height: 9px; opacity: 0; transition: opacity .2s ease; }
+
+  .node.active{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,120,71,0.16);
+    transform: scale(1.03);
+  }
+  .node.active .node-icon{ color: var(--accent-ink); background: var(--accent); }
+  .node.active .node-label{ color: var(--ink); }
+  .node.active .node-status{ border-color: var(--accent); background: var(--accent); animation: blip 1s ease-in-out infinite; }
+  @keyframes blip{ 0%,100%{ opacity:1; } 50%{ opacity:.55; } }
+
+  .node.done{ border-color: rgba(95,217,180,0.4); }
+  .node.done .node-icon{ color: var(--mint); }
+  .node.done .node-label{ color: var(--ink); }
+  .node.done .node-status{ border-color: var(--mint); background: var(--mint); }
+  .node.done .node-status svg{ opacity: 1; }
+
+  .connector{ display:flex; justify-content:center; height: 20px; }
+  .connector-line{
+    position: relative;
+    width: 3px; height: 100%;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .connector-fill{
+    position: absolute; left:0; top:0; width:100%; height:0%;
+    background: var(--mint);
+    transition: height var(--travel-ms) linear;
+  }
+  .connector.flowing .connector-fill, .connector.done .connector-fill{ height: 100%; }
+  .connector-dot{
+    position: absolute; left:50%; top:0;
+    width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 7px var(--accent);
+    opacity: 0;
+    transition: top var(--travel-ms) linear, opacity .15s ease;
+  }
+  .connector.flowing .connector-dot{ opacity: 1; top: 100%; }
+  .connector.done .connector-dot{ opacity: 0; top: 100%; }
+
+  @media (prefers-reduced-motion: reduce){
+    .node.active{ animation: none; transform: none; }
+    .node-status{ animation: none !important; }
+  }
+
+  .notes{
+    margin-top: 44px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+  .notes h3{
+    font-size: 13px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin: 0 0 14px;
+  }
+  .steps{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .steps li{ display: flex; gap: 10px; }
+  .steps .num{ font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--accent); flex: none; }
+  .steps p{ margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--ink); }
+  .steps span.dim{ color: var(--ink-dim); }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+  <p class="eyebrow">ANDERSENBUILDS · MOTION OVERLAYS</p>
+  <h1>Pipeline Overlay</h1>
+  <p class="lede">A node-by-node automation flow, lighting up in sequence as each step fires — the mechanism made visible instead of a screen full of unlabeled boxes. Default steps match your real stack; relabel them per video.</p>
+
+  <div class="stage">
+    <span class="tag">03 · WORKFLOW REVEAL</span>
+    <div class="frame">
+      <div class="pipeline" id="pipeline">
+        <div class="node" data-node="0">
+          <div class="node-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
+          </div>
+          <div class="node-text">
+            <div class="node-label">New idea logged</div>
+            <div class="node-sub">GOOGLE SHEETS</div>
+          </div>
+          <div class="node-status"><svg viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+
+        <div class="connector" data-connector="0"><div class="connector-line"><div class="connector-fill"></div><div class="connector-dot"></div></div></div>
+
+        <div class="node" data-node="1">
+          <div class="node-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </div>
+          <div class="node-text">
+            <div class="node-label">Script drafted</div>
+            <div class="node-sub">CLAUDE</div>
+          </div>
+          <div class="node-status"><svg viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+
+        <div class="connector" data-connector="1"><div class="connector-line"><div class="connector-fill"></div><div class="connector-dot"></div></div></div>
+
+        <div class="node" data-node="2">
+          <div class="node-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/><circle cx="12" cy="7" r="2"/><line x1="6" y1="17" x2="12" y2="7"/><line x1="18" y1="17" x2="12" y2="7"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+          </div>
+          <div class="node-text">
+            <div class="node-label">Scenario runs</div>
+            <div class="node-sub">MAKE.COM</div>
+          </div>
+          <div class="node-status"><svg viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+
+        <div class="connector" data-connector="2"><div class="connector-line"><div class="connector-fill"></div><div class="connector-dot"></div></div></div>
+
+        <div class="node" data-node="3">
+          <div class="node-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          </div>
+          <div class="node-text">
+            <div class="node-label">Email sent</div>
+            <div class="node-sub">BEEHIIV</div>
+          </div>
+          <div class="node-status"><svg viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h3>Using this overlay</h3>
+    <ul class="steps">
+      <li>
+        <span class="num">01</span>
+        <p><b>Relabel</b> — <span class="dim">edit the four `.node-label` / `.node-sub` pairs in the HTML for whatever tool chain this video is actually about.</span></p>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <p><b>Record</b> — <span class="dim">OBS window/browser-source capture at 1080×1920, cropped to the frame. One full loop is ~5s.</span></p>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <p><b>Layer</b> — <span class="dim">trim to one clean cycle in CapCut, mute its audio, drop it over the matching stretch of screen recording.</span></p>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var pipeline = document.getElementById('pipeline');
+  var nodes = Array.prototype.slice.call(document.querySelectorAll('.node'));
+  var connectors = Array.prototype.slice.call(document.querySelectorAll('.connector'));
+
+  function msVar(name){
+    var raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return parseFloat(raw) || 0;
+  }
+  var ACTIVE_MS = msVar('--active-ms');
+  var TRAVEL_MS = msVar('--travel-ms');
+  var HOLD_MS = msVar('--hold-ms');
+  var FADE_MS = msVar('--fade-ms');
+
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  function setNode(i, state){ nodes[i].className = 'node' + (state ? ' ' + state : ''); }
+  function setConnector(i, state){ connectors[i].className = 'connector' + (state ? ' ' + state : ''); }
+
+  if (reduceMotion) {
+    nodes.forEach(function(n){ n.className = 'node done'; });
+    connectors.forEach(function(c){ c.className = 'connector done'; });
+    return;
+  }
+
+  function resetAll(){
+    nodes.forEach(function(n){ n.className = 'node'; });
+    connectors.forEach(function(c){ c.className = 'connector'; });
+  }
+  resetAll();
+
+  async function runCycle(){
+    for (var i = 0; i < nodes.length; i++){
+      setNode(i, 'active');
+      await sleep(ACTIVE_MS);
+      setNode(i, 'done');
+      if (i < connectors.length){
+        setConnector(i, 'flowing');
+        await sleep(TRAVEL_MS);
+        setConnector(i, 'done');
+      }
+    }
+    await sleep(HOLD_MS);
+  }
+
+  async function loop(){
+    while (true){
+      await runCycle();
+      pipeline.style.opacity = '0';
+      await sleep(FADE_MS);
+      resetAll();
+      pipeline.style.opacity = '1';
+      await sleep(FADE_MS);
+    }
+  }
+  loop();
+})();
+</script>
