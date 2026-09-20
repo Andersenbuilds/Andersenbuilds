@@ -2,6 +2,7 @@
 
 State of this repo and what's still open. Rewritten in place — newest entry on top.
 
+- 2026-09-20 — Corrected both overlay templates. They were built off invented colors/type/motion (dark indigo, coral, mint, Sora, glow/pulse effects) because this session only had `Andersenbuilds/Andersenbuilds` attached and assumed no brand guide existed (see the old open item 6, now resolved). There IS one — `andersenbuilds-brand` repo, `design-system.md` + `AB_CARD_BASELINE.md` — locked 4-color palette (`#1A1A1A` ink / `#FAFAFA` off-white / `#C2410C` orange / `#6B6B6B` warm-grey), Inter only, no gradients/shadows/glow ever, fade-and-rise motion capped at 300ms. Both templates rebuilt to match it exactly; the CTA copy now mirrors the real `05_cta_popup.svg` from the V9 production pack. **This account has 9 repos total** (see below) — only 3 are attached to this session as of this entry. Worth checking what else is stale before trusting anything this repo says about "current state."
 - 2026-09-20 — Added `templates/pipeline-overlay.html` (automation flow-diagram overlay: 4 nodes light up in sequence, default labels match the real Sheets → Claude → Make.com → Beehiiv stack). Same design tokens as `overlay-kit.html` by convention, not by a written spec — see open item 6.
 - 2026-09-20 — Added `docs/overlay-ideas.md` (backlog of overlay/animation ideas beyond the two already built).
 - 2026-09-20 — Added `docs/higgsfield-ai-benchmark.md` (researched capability/pricing benchmark) and `templates/overlay-kit.html` (reusable growth-counter + join-CTA motion overlay for shorts — see file header for how to record it into CapCut).
@@ -17,7 +18,19 @@ Branch: `main`.
 
 `claude/directory-save-location-nle28s` still exists on GitHub, points at the identical commit, and is still marked as the repo's **default branch**. Clearing that is open item 3.
 
-Other repos on this account: `Andersenbuilds/Howto101` (private, last pushed 2026-08-11) — the "How to 101" app, separate from this work.
+**Other repos on this account (checked 2026-09-20 via `list_repos`, not from memory):**
+
+| Repo | Visibility | What it is |
+|---|---|---|
+| `andersenbuilds-brand` | private | **The real brand system.** `design-system.md`, `AB_CARD_BASELINE.md`, production card SVGs, `AB_COLLECTED_KNOWLEDGE.md`, skills for ideas/script/voice/fact-sweep, landing page, research files. This is almost certainly the primary AndersenBuilds content repo. |
+| `personal-skills` | private | **Already the dedicated skills repo** — open item 2 below is stale, this exists and already has `project-kickoff/` in it plus several others (stop-slop, task-observer, youtube-research, instagram-research, watch-video...) and Claude memory backups. |
+| `Howto101` | private | "How to 101" app. |
+| `BilBlik-app` / `BilBlik` | private | Separate project, not yet looked at from this session. |
+| `byggepris` | private | Separate project, not yet looked at from this session. |
+| `AI-Mastery` | private | Separate project, not yet looked at from this session. |
+| `agent-lab` | private | Separate project, not yet looked at from this session. |
+
+Only `Andersenbuilds/Andersenbuilds`, `andersenbuilds-brand`, and `personal-skills` are attached to this session right now. The rest exist but haven't been opened — don't assume this file's "open items" below are still accurate for anything that touches skills or the brand repo specifically, since two of them (2 and 6) turned out to already be solved elsewhere.
 
 ```
 HANDOFF.md                          this file
@@ -51,19 +64,13 @@ Worth knowing why it kept not happening: opening the Claude Code desktop app **r
 
 See `INSTALL.md` — it has the full no-terminal path. Short version: the skill lives in Malthe's own `skills` folder and is symlinked into `~/.claude/skills/`, so there's one copy, edited in place, live in Claude Code immediately.
 
-### 2. Create a dedicated skills repo
+### 2. ~~Create a dedicated skills repo~~ — RESOLVED, already exists
 
-Not done — the cloud session's GitHub App lacked repo-creation permission. From a local session with your own GitHub login this is unblocked.
+`Andersenbuilds/personal-skills` already exists and already has `project-kickoff/` in it, plus several more skills (stop-slop, task-observer, youtube-research, instagram-research, watch-video, docx/pptx/artifact-design extras) and Claude memory backups. This session just didn't know about it until checking `list_repos` on 2026-09-20.
 
-Create an empty repo (personal, private is fine), then:
+Not yet done: the copy of `project-kickoff/` living in *this* repo (`skills/project-kickoff/`) has never been diffed against the one in `personal-skills` — they may have drifted. Worth comparing before treating either as canonical.
 
-```
-cp -r skills/project-kickoff <skills-repo>/
-```
-
-Commit it there. Don't try to carry the git history across — it's two commits and none of it matters.
-
-Leave `docs/how-my-setup-works.md` here. It's notes about the setup, not a skill; the skills repo shouldn't become a junk drawer.
+Leave `docs/how-my-setup-works.md` here regardless. It's notes about the setup, not a skill.
 
 ### 3. Finish the branch rename
 
@@ -76,17 +83,21 @@ Both branches point at the same commit, so nothing is at risk either way — thi
 
 ### 4. The `playground` repo, never created
 
-Asked for early on: a private personal repo called `playground`. Never created — the cloud session's GitHub App lacks repo-creation permission (403 on personal, 404 on org), and there's no `gh` CLI. Still outstanding, and trivial from a local session or github.com.
+Asked for early on: a private personal repo called `playground`. Still never created — confirmed via `list_repos` on 2026-09-20, no repo by that name exists among the 9 on this account. Trivial from a local session or github.com.
 
-Worth deciding whether `playground` and the skills repo in item 2 are the same thing or two separate repos.
+Item 2's "is this the same repo" question is answered: `personal-skills` is a real, separate, already-existing repo, and `playground` still doesn't exist. Two different things.
 
-### 5. Memory files (open question, not a task)
+### 5. ~~Memory files only live in claude.ai Project knowledge~~ — PARTLY WRONG
 
-`AB_COLLECTED_KNOWLEDGE.md` and the other memory files live in claude.ai Project knowledge, so git doesn't reach them and Claude Code can't read them. Moving them into a repo would mean maintaining them somewhere both can see. Real workflow change, not a free upgrade — undecided.
+This claimed git can't reach the memory files. Checked 2026-09-20: `AB_COLLECTED_KNOWLEDGE.md` is a real, git-tracked file in the `andersenbuilds-brand` repo, alongside `AB_CARD_BASELINE.md`, `FACT_STATUS.md`, `TODO.md`, `DIRECTION.md`, session logs, and more.
 
-### 6. No written visual brand guide
+Genuinely open question, now more specific: is the copy in `andersenbuilds-brand` the same one referenced as living in claude.ai Project knowledge, kept in sync by hand, or has it forked into two versions that disagree? Don't trust either one as sole source of truth until that's checked.
 
-There's an `andersenbuilds-brand-voice` skill for writing tone, but nothing pins down colors, type, or visual identity for on-screen assets. The palette and fonts in `templates/overlay-kit.html` and `templates/pipeline-overlay.html` (dark indigo `#130F1C`, coral `#FF7847`, mint `#5FD9B4`, Sora + IBM Plex Mono) were picked to avoid generic AI-generated-design clichés and kept consistent between the two files — not pulled from an approved spec, because there isn't one yet. Fine as a placeholder system; worth locking in a real one before more overlays get built on top of it, so a future rebrand doesn't mean redoing every template.
+### 6. ~~No written visual brand guide~~ — WRONG, RESOLVED
+
+There is one, and it's locked: `andersenbuilds-brand` repo, `design-system.md` (web/general) + `AB_CARD_BASELINE.md` (video cards/overlays, wins on conflict). Four colors only — ink `#1A1A1A`, off-white `#FAFAFA`, orange `#C2410C`, warm-grey `#6B6B6B` — Inter only, no gradients/shadows/glow ever, near-square not pill/rounded, fade-and-rise motion capped at 300ms.
+
+`templates/overlay-kit.html` and `templates/pipeline-overlay.html` were originally built without this (dark indigo, coral, mint, Sora, glow/pulse effects) because this session hadn't attached `andersenbuilds-brand` yet. Both were rebuilt same day to match the real spec once found. Any *other* on-screen asset built in this repo from here on must be checked against `AB_CARD_BASELINE.md` first — don't repeat this.
 
 ## Decisions already made
 
