@@ -1,0 +1,368 @@
+<title>Overlay Kit</title>
+<style>
+  :root{
+    --bg:#130F1C;
+    --surface:#1E1930;
+    --frame:#1A1428;
+    --grid-line:#2B2344;
+    --ink:#F4F0E8;
+    --ink-dim:#948DAA;
+    --accent:#FF7847;
+    --accent-ink:#2A0F02;
+    --mint:#5FD9B4;
+    --border:#332A4C;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#130F1C; --surface:#1E1930; --frame:#1A1428; --grid-line:#2B2344;
+      --ink:#F4F0E8; --ink-dim:#948DAA; --border:#332A4C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#130F1C; --surface:#1E1930; --frame:#1A1428; --grid-line:#2B2344;
+    --ink:#F4F0E8; --ink-dim:#948DAA; --border:#332A4C;
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Sora", ui-sans-serif, system-ui, sans-serif;
+    padding-inline: 20px;
+    padding-block: 40px;
+  }
+  .wrap{ max-width: 880px; margin: 0 auto; }
+
+  .eyebrow{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1{
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 8px 0 6px;
+    text-wrap: balance;
+  }
+  .lede{
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 60ch;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .frames{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px;
+    margin-top: 36px;
+  }
+  .component{ display:flex; flex-direction:column; gap: 12px; }
+  .component-head{ display:flex; align-items:baseline; justify-content: space-between; gap: 8px; }
+  .component-head h2{
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .tag{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    border: 1px solid var(--border);
+    padding: 3px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .frame{
+    position: relative;
+    aspect-ratio: 9 / 16;
+    max-width: 280px;
+    width: 100%;
+    margin-inline: auto;
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, rgba(255,120,71,0.06), transparent 40%),
+      repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 34px),
+      repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 34px),
+      var(--frame);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.6);
+  }
+
+  /* --- Component 1: growth counter --- */
+  .counter-card{
+    position: absolute;
+    top: 14%;
+    left: 8%;
+    right: 8%;
+    background: rgba(26,20,40,0.82);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px 12px;
+    backdrop-filter: blur(2px);
+  }
+  .counter-label{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .counter-value{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 2px;
+    letter-spacing: -0.01em;
+  }
+  .counter-delta{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--mint);
+    margin-top: 6px;
+  }
+  .chart-wrap{ margin-top: 8px; }
+  .chart-wrap svg{ width: 100%; height: auto; display:block; }
+  .example-flag{
+    position:absolute; bottom: 10px; left: 0; right: 0;
+    text-align:center;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    opacity: 0.7;
+  }
+
+  /* --- Component 2: CTA lower third --- */
+  .cta-anchor{
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 12%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .cta-pill{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 11px 18px;
+    border-radius: 999px;
+    box-shadow: 0 0 0 0 rgba(255,120,71,0.5);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .cta-pill svg{ width: 14px; height: 14px; flex: none; }
+  .cta-sub{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,120,71,0.45); transform: scale(1); }
+    50% { box-shadow: 0 0 0 10px rgba(255,120,71,0); transform: scale(1.035); }
+  }
+  @keyframes bob{
+    0%, 100% { transform: translateY(0); opacity: 0.85; }
+    50% { transform: translateY(3px); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .cta-pill, .cta-sub{ animation: none; }
+  }
+
+  .notes{
+    margin-top: 44px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+  .notes h3{
+    font-size: 13px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin: 0 0 14px;
+  }
+  .steps{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .steps li{
+    display: flex;
+    gap: 10px;
+  }
+  .steps .num{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--accent);
+    flex: none;
+  }
+  .steps p{
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .steps p b{ color: var(--ink); }
+  .steps span.dim{ color: var(--ink-dim); }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+  <p class="eyebrow">ANDERSENBUILDS · MOTION OVERLAYS</p>
+  <h1>Overlay Kit</h1>
+  <p class="lede">Two reusable overlays, each shown at true 9:16 scale inside its own loop. Record once with OBS, trim the loop in CapCut, reuse across every short.</p>
+
+  <div class="frames">
+    <div class="component">
+      <div class="component-head">
+        <h2>Growth counter</h2>
+        <span class="tag">01 · HOOK OVERLAY</span>
+      </div>
+      <div class="frame">
+        <div class="counter-card" id="counterCard">
+          <div class="counter-label">Subscribers</div>
+          <div class="counter-value" id="counterValue">0</div>
+          <div class="counter-delta" id="counterDelta">↑ 0 this week</div>
+          <div class="chart-wrap">
+            <svg viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#5FD9B4" stop-opacity="0.35" />
+                  <stop offset="100%" stop-color="#5FD9B4" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path id="chartArea" d="M0,84 L50,68 L100,76 L150,52 L200,33 L250,44 L300,5 L300,96 L0,96 Z" fill="url(#areaFill)" opacity="0" />
+              <path id="chartLine" d="M0,84 L50,68 L100,76 L150,52 L200,33 L250,44 L300,5" fill="none" stroke="#5FD9B4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              <circle id="chartDot" cx="300" cy="5" r="4" fill="#5FD9B4" />
+            </svg>
+          </div>
+        </div>
+        <div class="example-flag">Example data — swap in your Beehiiv numbers</div>
+      </div>
+    </div>
+
+    <div class="component">
+      <div class="component-head">
+        <h2>Join CTA</h2>
+        <span class="tag">02 · LOWER THIRD</span>
+      </div>
+      <div class="frame">
+        <div class="cta-anchor">
+          <div class="cta-pill">
+            <span>Join the free list</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+          <div class="cta-sub">link in bio · beehiiv</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h3>How to turn this into footage</h3>
+    <ul class="steps">
+      <li>
+        <span class="num">01</span>
+        <p><b>Record</b> — <span class="dim">OBS window/browser-source capture, cropped to one frame at 1080×1920. 6–10s covers a full loop.</span></p>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <p><b>Trim</b> — <span class="dim">cut to one clean cycle in CapCut and save it as a reusable overlay clip.</span></p>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <p><b>Layer</b> — <span class="dim">drop it on a track above your footage, mute its audio, position per component (counter near the hook, CTA in the last few seconds).</span></p>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var valueEl = document.getElementById('counterValue');
+  var deltaEl = document.getElementById('counterDelta');
+  var line = document.getElementById('chartLine');
+  var area = document.getElementById('chartArea');
+  var card = document.getElementById('counterCard');
+  var target = 1248;
+  var deltaTarget = 42;
+
+  function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+
+  if (reduceMotion) {
+    valueEl.textContent = fmt(target);
+    deltaEl.textContent = '↑ ' + deltaTarget + ' this week';
+    area.style.opacity = 1;
+    return;
+  }
+
+  var len = line.getTotalLength();
+  line.style.strokeDasharray = len;
+
+  function resetState(){
+    valueEl.textContent = '0';
+    deltaEl.textContent = '↑ 0 this week';
+    line.style.strokeDashoffset = len;
+    area.style.opacity = 0;
+  }
+  resetState();
+
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+  function playOnce(onDone){
+    var duration = 2200;
+    var start = null;
+    function frame(ts){
+      if (!start) start = ts;
+      var t = Math.min((ts - start) / duration, 1);
+      var eased = easeOutCubic(t);
+      valueEl.textContent = fmt(eased * target);
+      deltaEl.textContent = '↑ ' + Math.round(eased * deltaTarget) + ' this week';
+      line.style.strokeDashoffset = len * (1 - eased);
+      area.style.opacity = eased;
+      if (t < 1) { requestAnimationFrame(frame); } else if (onDone) { onDone(); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function loop(){
+    playOnce(function(){
+      setTimeout(function(){
+        card.style.transition = 'opacity .35s ease';
+        card.style.opacity = '0';
+        setTimeout(function(){
+          resetState();
+          card.style.opacity = '1';
+          loop();
+        }, 380);
+      }, 1500);
+    });
+  }
+  loop();
+})();
+</script>

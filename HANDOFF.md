@@ -2,6 +2,7 @@
 
 State of this repo and what's still open. Rewritten in place — newest entry on top.
 
+- 2026-09-20 — Added `docs/higgsfield-ai-benchmark.md` (researched capability/pricing benchmark) and `templates/overlay-kit.html` (reusable growth-counter + join-CTA motion overlay for shorts — see file header for how to record it into CapCut).
 - 2026-08-16 — Renamed the branch to `main` and pushed it. GitHub's default branch still points at the old name — see open item 3. Recorded the outstanding `playground` repo request and the existing `Howto101` repo, which were only in chat.
 - 2026-08-16 — Added `docs/obs-longform-setup.md` (researched, untested). Aligned the skill README with `INSTALL.md`, which contradicted it on install method.
 - 2026-08-16 — Built the `project-kickoff` skill and wrote `docs/how-my-setup-works.md`. Both committed. Skill is not yet installed on the laptop, and the dedicated skills repo does not exist yet.
@@ -21,6 +22,8 @@ HANDOFF.md                          this file
 INSTALL.md                          how to install the skill, no terminal
 docs/how-my-setup-works.md          notes on git, repos, what persists
 docs/obs-longform-setup.md          OBS settings for 1080p YouTube long-form
+docs/higgsfield-ai-benchmark.md     Higgsfield AI capability/pricing research
+templates/overlay-kit.html          growth counter + join CTA motion overlay (open in a browser)
 skills/project-kickoff/
   SKILL.md                          the skill itself
   README.md                         install + usage
