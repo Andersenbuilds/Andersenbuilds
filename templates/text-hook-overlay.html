@@ -1,0 +1,378 @@
+<title>Text Hook Overlay</title>
+<style>
+  :root{
+    --page-bg:#FAFAFA;
+    --page-ink:#1A1A1A;
+    --page-warm:#6B6B6B;
+    --page-orange:#C2410C;
+    --page-border: rgba(26,26,26,0.14);
+    --field-bg:#FFFFFF;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --page-bg:#1A1A1A; --page-ink:#FAFAFA; --page-warm:#9A9A9A; --page-border: rgba(250,250,250,0.16); --field-bg:#111111; }
+  }
+  :root[data-theme="dark"]{ --page-bg:#1A1A1A; --page-ink:#FAFAFA; --page-warm:#9A9A9A; --page-border: rgba(250,250,250,0.16); --field-bg:#111111; }
+
+  *{ box-sizing: border-box; }
+  body{ background: var(--page-bg); color: var(--page-ink); font-family: "Inter", ui-sans-serif, system-ui, Arial, sans-serif; padding-inline: 16px; padding-block: 40px; margin: 0; }
+  .wrap{ max-width: 960px; margin: 0 auto; }
+
+  .eyebrow{ font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--page-orange); }
+  h1{ font-size: clamp(28px, 5vw, 44px); font-weight: 800; line-height: 1.08; letter-spacing: -0.02em; margin: 10px 0 8px; text-wrap: balance; }
+  .lede{ color: var(--page-warm); font-size: 16px; max-width: 64ch; line-height: 1.55; margin: 0; }
+
+  .layout{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 36px; margin-top: 36px; align-items: start; }
+
+  fieldset{ border: 0; border-top: 1px solid var(--page-border); padding: 18px 0 6px; margin: 0; min-width: 0; }
+  legend{ font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--page-warm); padding: 0 0 4px; }
+  label{ display: block; font-size: 13px; font-weight: 600; margin: 12px 0 5px; }
+  label .dim{ font-weight: 400; color: var(--page-warm); }
+  input[type=text], textarea{
+    width: 100%; font: inherit; font-size: 15px; color: var(--page-ink); background: var(--field-bg);
+    border: 1px solid var(--page-border); border-radius: 2px; padding: 8px 10px;
+  }
+  textarea{ resize: vertical; min-height: 54px; line-height: 1.4; }
+  input[type=text]:focus, textarea:focus{ outline: 2px solid var(--page-orange); outline-offset: 0; }
+  .row{ display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; margin-top: 8px; }
+  .pic{ display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 10px; }
+  .pic input[type=file]{ font-size: 13px; color: var(--page-warm); max-width: 100%; }
+  input[type=range]{ width: 100%; accent-color: var(--page-orange); }
+
+  .checks{ list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; font-size: 13.5px; }
+  .checks li{ display: flex; gap: 8px; align-items: baseline; }
+  .checks .mark{ width: 1.2em; flex: none; font-weight: 800; }
+  .checks .ok .mark{ color: var(--page-ink); }
+  .checks .miss .mark{ color: var(--page-orange); }
+  .checks .miss{ color: var(--page-warm); }
+  .truth{ display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-size: 14px; font-weight: 600; }
+  .truth input{ width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--page-orange); flex: none; }
+
+  .preview{ position: sticky; top: 16px; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+  .tag{ font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--page-warm); border: 1px solid var(--page-border); padding: 3px 8px; border-radius: 2px; align-self: center; }
+  /* stand-in for the talking-head footage -- page chrome, not brand output */
+  .frame{ position: relative; width: 100%; max-width: 300px; aspect-ratio: 9 / 16; background: #4A4A4A; overflow: hidden; }
+  .frame .stand-in{ position: absolute; left: 0; right: 0; bottom: 30%; text-align: center; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #9A9A9A; }
+  .frame canvas{ position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .btn{
+    font: inherit; font-size: 14px; font-weight: 700; border-radius: 2px; padding: 10px 16px; cursor: pointer;
+    background: var(--page-orange); color: #FAFAFA; border: 1px solid var(--page-orange);
+  }
+  .btn:disabled{ background: transparent; color: var(--page-warm); border-color: var(--page-border); cursor: not-allowed; }
+  .btn-ghost{ background: transparent; color: var(--page-ink); border-color: var(--page-border); }
+  .actions{ display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .hint{ font-size: 12.5px; color: var(--page-warm); text-align: center; max-width: 300px; margin: 0; line-height: 1.5; }
+
+  .notes{ margin-top: 48px; border-top: 1px solid var(--page-border); padding-top: 22px; }
+  .notes h3{ font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--page-warm); margin: 0 0 14px; }
+  .steps{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; list-style: none; padding: 0; margin: 0; }
+  .steps li{ display: flex; gap: 10px; }
+  .steps .num{ font-size: 13px; font-weight: 700; color: var(--page-orange); flex: none; }
+  .steps p{ margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--page-ink); }
+  .steps span.dim{ color: var(--page-warm); }
+  .brand-note{ margin-top: 26px; font-size: 12.5px; color: var(--page-warm); line-height: 1.6; border-left: 2px solid var(--page-border); padding-left: 14px; }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+
+<div class="wrap">
+  <p class="eyebrow">ANDERSENBUILDS · OVERLAY KIT</p>
+  <h1>Text Hook Overlay</h1>
+  <p class="lede">The frame-1 hook from the @mino.mp4 breakdown (`docs/text-hook-research.md`), rebuilt to brand: proof numbers, optional pictures (the overlay method) and one hook line with an orange keyword. It exports a 1080×1920 PNG with a transparent background. Drop it on top of the talking-head in CapCut for the first 3–5s.</p>
+
+  <div class="layout">
+    <form id="editor" autocomplete="off" onsubmit="return false">
+      <fieldset>
+        <legend>1 · Hook pass</legend>
+        <label for="draft">Draft <span class="dim">— the plain version</span></label>
+        <textarea id="draft" rows="2">I automated my hook writing with Claude.</textarea>
+        <label for="tenx">10x <span class="dim">— as extreme as it goes. Can be false. Never exported.</span></label>
+        <textarea id="tenx" rows="2">AI writes all my videos now and I just press record.</textarea>
+        <label for="hook">True 10x <span class="dim">— the most extreme TRUE version. This is the one on screen. Wrap the keyword in *stars* to make it orange.</span></label>
+        <textarea id="hook" rows="3">Grocery store apprentice building an AI business with *zero code*.</textarea>
+        <ul class="checks" id="checks"></ul>
+        <label class="truth"><input type="checkbox" id="truth"> Every claim in the True 10x line and the numbers below is true.</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>2 · Proof numbers</legend>
+        <p class="hint" style="text-align:left;max-width:none">Use cost, time or day count, not views. Leave a row empty to hide it.</p>
+        <div class="row"><input type="text" id="v0" value="$1,400" aria-label="Number 1"><input type="text" id="l0" value="Total budget" aria-label="Label 1"></div>
+        <div class="row"><input type="text" id="v1" value="0" aria-label="Number 2"><input type="text" id="l1" value="Lines of code" aria-label="Label 2"></div>
+        <div class="row"><input type="text" id="v2" value="" placeholder="e.g. Day 23" aria-label="Number 3"><input type="text" id="l2" value="" placeholder="e.g. Of 90" aria-label="Label 3"></div>
+        <div class="row"><input type="text" id="v3" value="" placeholder="e.g. 12 min" aria-label="Number 4"><input type="text" id="l3" value="" placeholder="e.g. Was 6 hrs" aria-label="Label 4"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>3 · Pictures (overlay method)</legend>
+        <p class="hint" style="text-align:left;max-width:none">Optional. Your own screenshots or photos only. Pictures are not saved between visits. Pictures + numbers + line together cover your face. Pick two.</p>
+        <div class="pic"><input type="file" id="f0" accept="image/*" aria-label="Picture 1"><input type="text" id="c0" placeholder="Caption (optional)" aria-label="Caption 1"></div>
+        <div class="pic"><input type="file" id="f1" accept="image/*" aria-label="Picture 2"><input type="text" id="c1" placeholder="Caption (optional)" aria-label="Caption 2"></div>
+        <div class="pic"><input type="file" id="f2" accept="image/*" aria-label="Picture 3"><input type="text" id="c2" placeholder="Caption (optional)" aria-label="Caption 3"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>4 · Position</legend>
+        <label for="top">Distance from top <span class="dim" id="topOut"></span></label>
+        <input type="range" id="top" min="200" max="760" step="10" value="300">
+      </fieldset>
+    </form>
+
+    <div class="preview">
+      <span class="tag">05 · Frame-1 hook</span>
+      <div class="frame">
+        <div class="stand-in">Your video</div>
+        <canvas id="canvas" width="1080" height="1920"></canvas>
+      </div>
+      <div class="actions">
+        <button class="btn" id="exportBtn" type="button">Download PNG</button>
+        <button class="btn btn-ghost" id="resetBtn" type="button">Reset</button>
+      </div>
+      <p class="hint" id="exportHint"></p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h3>Using this overlay</h3>
+    <ul class="steps">
+      <li><span class="num">01</span><p><b>Hook pass</b> — <span class="dim">draft → 10x → true 10x. Only the true line is exported. Export stays locked until the truth box is ticked.</span></p></li>
+      <li><span class="num">02</span><p><b>Export</b> — <span class="dim">Download PNG gives a 1080×1920 file. Everything outside the band is transparent.</span></p></li>
+      <li><span class="num">03</span><p><b>CapCut</b> — <span class="dim">Overlay → add the PNG on top of the talking-head, from 0:00 to about 0:04. No fade-in. It must be there on frame 1.</span></p></li>
+      <li><span class="num">04</span><p><b>Log it</b> — <span class="dim">note "overlay hook: yes" in the Sheet row so the 3-second hold can be compared later (test plan in the research doc).</span></p></li>
+    </ul>
+  </div>
+
+  <p class="brand-note">Built to `AB_CARD_BASELINE.md` by the same tokens as the other overlays: ink band at 92% with an orange top rule (the burn-in band spec, same as the growth counter), Inter only, near-square corners, no gradient/shadow/glow. Orange is spent once, on the hook keyword, so the eye lands there. Static on purpose: the hook has to be readable on frame 1, so there is no entrance animation to wait for.</p>
+</div>
+
+<script>
+(function(){
+  var W = 1080, H = 1920;
+  var INK = '#1A1A1A', OFF = '#FAFAFA', ORANGE = '#C2410C', WARM = '#6B6B6B';
+  var PAD_X = 86, PAD_Y = 52, RULE = 14, GAP = 36;
+  var STORE_KEY = 'ab-text-hook-overlay';
+  var AUDIENCE_WORDS = ['non-coder', 'non coder', 'no-code', 'no code', 'zero code', 'non-technical', 'solo', 'solopreneur', 'freelancer', 'beginner', 'grocery', 'apprentice', 'side hustle', '9-5', '9 to 5', 'day job'];
+
+  var $ = function(id){ return document.getElementById(id); };
+  var canvas = $('canvas'), ctx = canvas.getContext('2d');
+  var textIds = ['draft', 'tenx', 'hook', 'v0', 'l0', 'v1', 'l1', 'v2', 'l2', 'v3', 'l3', 'c0', 'c1', 'c2', 'top'];
+  var defaults = {};
+  textIds.forEach(function(id){ defaults[id] = $(id).value; });
+  var pics = [null, null, null];
+
+  // --- per-viewer convenience only: remember typed fields, never pictures ---
+  function save(){
+    try {
+      var data = {};
+      textIds.forEach(function(id){ data[id] = $(id).value; });
+      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+  function load(){
+    try {
+      var data = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+      if (data) textIds.forEach(function(id){ if (typeof data[id] === 'string') $(id).value = data[id]; });
+    } catch (e) {}
+  }
+
+  // "*word*" -> orange. Returns [{text, hot}] word tokens.
+  function tokens(line){
+    var out = [];
+    line.split(/(\*[^*]+\*)/).forEach(function(part){
+      if (!part) return;
+      var hot = part.length > 2 && part[0] === '*' && part[part.length - 1] === '*';
+      var text = hot ? part.slice(1, -1) : part;
+      text.split(/\s+/).forEach(function(w){ if (w) out.push({ text: w, hot: hot }); });
+    });
+    return out;
+  }
+
+  function wrap(words, maxW){
+    var lines = [], cur = [], curW = 0, space = ctx.measureText(' ').width;
+    words.forEach(function(w){
+      var ww = ctx.measureText(w.text).width;
+      var next = cur.length ? curW + space + ww : ww;
+      if (cur.length && next > maxW){ lines.push(cur); cur = [w]; curW = ww; }
+      else { cur.push(w); curW = next; }
+    });
+    if (cur.length) lines.push(cur);
+    return lines;
+  }
+
+  function setFont(weight, size){ ctx.font = weight + ' ' + size + 'px Inter, ui-sans-serif, system-ui, Arial, sans-serif'; }
+  function setSpacing(px){ if ('letterSpacing' in ctx) ctx.letterSpacing = px + 'px'; }
+
+  function roundRect(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r); ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h); ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r); ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+
+  // Layout first (so the band height is known), then draw.
+  function render(){
+    var top = +$('top').value;
+    var innerW = W - PAD_X * 2;
+    var ops = [];
+    var y = top + RULE + PAD_Y;
+
+    // pictures
+    var shown = pics.map(function(p, i){ return p ? { img: p, cap: $('c' + i).value.trim() } : null; }).filter(Boolean);
+    if (shown.length){
+      var tileGap = 20;
+      var tileW = (innerW - tileGap * (shown.length - 1)) / shown.length;
+      var tileH = shown.length === 1 ? 440 : shown.length === 2 ? 400 : 320;
+      var anyCap = shown.some(function(s){ return s.cap; });
+      shown.forEach(function(s, i){ ops.push({ kind: 'pic', img: s.img, cap: s.cap, x: PAD_X + i * (tileW + tileGap), y: y, w: tileW, h: tileH }); });
+      y += tileH + (anyCap ? 52 : 0) + GAP;
+    }
+
+    // proof chips
+    var chips = [0, 1, 2, 3].map(function(i){ return { v: $('v' + i).value.trim(), l: $('l' + i).value.trim().toUpperCase() }; })
+      .filter(function(c){ return c.v; });
+    if (chips.length){
+      var chipPadX = 24, chipPadY = 18, valSize = 58, labSize = 22, chipGap = 16;
+      var chipH = chipPadY * 2 + valSize + 10 + labSize;
+      var cx = PAD_X, rowY = y;
+      chips.forEach(function(c){
+        setFont(800, valSize); setSpacing(0); var vw = ctx.measureText(c.v).width;
+        setFont(700, labSize); setSpacing(2.5); var lw = c.l ? ctx.measureText(c.l).width : 0; setSpacing(0);
+        var w = Math.min(innerW, Math.max(vw, lw) + chipPadX * 2);
+        if (cx > PAD_X && cx + w > PAD_X + innerW){ cx = PAD_X; rowY += chipH + chipGap; }
+        ops.push({ kind: 'chip', v: c.v, l: c.l, x: cx, y: rowY, w: w, h: chipH, padX: chipPadX, padY: chipPadY, valSize: valSize, labSize: labSize });
+        cx += w + chipGap;
+      });
+      y = rowY + chipH + GAP;
+    }
+
+    // hook line: shrink until it fits in 3 lines
+    var words = tokens($('hook').value.trim());
+    if (words.length){
+      var size = 78, lines;
+      do { setFont(800, size); lines = wrap(words, innerW); if (lines.length <= 3) break; size -= 4; } while (size > 48);
+      var lh = Math.round(size * 1.12);
+      ops.push({ kind: 'hook', lines: lines, size: size, lh: lh, x: PAD_X, y: y });
+      y += lh * lines.length + GAP;
+    }
+
+    var bottom = y - GAP + PAD_Y;
+    ctx.clearRect(0, 0, W, H);
+    if (!ops.length) return;
+
+    // burn-in band + orange top rule
+    ctx.fillStyle = 'rgba(26,26,26,0.92)';
+    ctx.fillRect(0, top, W, bottom - top);
+    ctx.fillStyle = ORANGE;
+    ctx.fillRect(0, top, W, RULE);
+
+    ops.forEach(function(op){
+      if (op.kind === 'pic'){
+        var iw = op.img.naturalWidth || op.img.width, ih = op.img.naturalHeight || op.img.height;
+        var scale = Math.max(op.w / iw, op.h / ih);
+        var sw = op.w / scale, sh = op.h / scale;
+        ctx.drawImage(op.img, (iw - sw) / 2, (ih - sh) / 2, sw, sh, op.x, op.y, op.w, op.h);
+        ctx.strokeStyle = 'rgba(250,250,250,0.18)'; ctx.lineWidth = 2;
+        ctx.strokeRect(op.x + 1, op.y + 1, op.w - 2, op.h - 2);
+        if (op.cap){
+          setFont(700, 24); setSpacing(2.5); ctx.fillStyle = WARM; ctx.textBaseline = 'top';
+          ctx.fillText(op.cap.toUpperCase(), op.x, op.y + op.h + 16, op.w); setSpacing(0);
+        }
+      } else if (op.kind === 'chip'){
+        roundRect(op.x + 1, op.y + 1, op.w - 2, op.h - 2, 3);
+        ctx.strokeStyle = 'rgba(250,250,250,0.22)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.textBaseline = 'top';
+        setFont(800, op.valSize); ctx.fillStyle = OFF;
+        ctx.fillText(op.v, op.x + op.padX, op.y + op.padY - 4, op.w - op.padX * 2);
+        if (op.l){
+          setFont(700, op.labSize); setSpacing(2.5); ctx.fillStyle = WARM;
+          ctx.fillText(op.l, op.x + op.padX, op.y + op.padY + op.valSize + 10, op.w - op.padX * 2); setSpacing(0);
+        }
+      } else if (op.kind === 'hook'){
+        setFont(800, op.size); setSpacing(-0.5); ctx.textBaseline = 'top';
+        var space = ctx.measureText(' ').width;
+        op.lines.forEach(function(line, li){
+          var x = op.x;
+          line.forEach(function(w){
+            ctx.fillStyle = w.hot ? ORANGE : OFF;
+            ctx.fillText(w.text, x, op.y + li * op.lh);
+            x += ctx.measureText(w.text).width + space;
+          });
+        });
+        setSpacing(0);
+      }
+    });
+  }
+
+  function checks(){
+    var plain = $('hook').value.replace(/\*/g, '');
+    var lower = plain.toLowerCase();
+    var chipText = [0, 1, 2, 3].map(function(i){ return $('v' + i).value; }).join(' ');
+    var hasNumber = /\d/.test(plain + ' ' + chipText);
+    var hasAudience = AUDIENCE_WORDS.some(function(w){ return lower.indexOf(w) !== -1; });
+    var hasKeyword = /\*[^*]+\*/.test($('hook').value);
+    var wordCount = plain.trim().split(/\s+/).filter(Boolean).length;
+    var items = [
+      [hasNumber, 'Has a specific number (in the line or a proof number)'],
+      [hasAudience, 'Has an audience keyword (non-coder, solo, freelancer, grocery…)'],
+      [hasKeyword, 'One keyword marked orange with *stars*'],
+      [wordCount <= 14, 'Short enough to read in 3 seconds (' + wordCount + ' / 14 words)']
+    ];
+    $('checks').innerHTML = items.map(function(it){
+      return '<li class="' + (it[0] ? 'ok' : 'miss') + '"><span class="mark">' + (it[0] ? '✓' : '—') + '</span><span>' + it[1] + '</span></li>';
+    }).join('');
+
+    var truthy = $('truth').checked;
+    $('exportBtn').disabled = !truthy;
+    $('exportHint').textContent = truthy
+      ? '1080×1920 PNG, transparent outside the band.'
+      : 'Tick "every claim is true" to unlock the export.';
+  }
+
+  function update(){
+    $('topOut').textContent = '— ' + $('top').value + ' px of 1920';
+    checks();
+    render();
+    save();
+  }
+
+  [0, 1, 2].forEach(function(i){
+    $('f' + i).addEventListener('change', function(e){
+      var file = e.target.files && e.target.files[0];
+      if (!file){ pics[i] = null; update(); return; }
+      var img = new Image();
+      img.onload = function(){ pics[i] = img; update(); };
+      img.src = URL.createObjectURL(file);
+    });
+  });
+
+  $('editor').addEventListener('input', update);
+  $('truth').addEventListener('change', update);
+
+  $('exportBtn').addEventListener('click', function(){
+    canvas.toBlob(function(blob){
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'hook-overlay.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+    }, 'image/png');
+  });
+
+  $('resetBtn').addEventListener('click', function(){
+    textIds.forEach(function(id){ $(id).value = defaults[id]; });
+    [0, 1, 2].forEach(function(i){ $('f' + i).value = ''; pics[i] = null; });
+    $('truth').checked = false;
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    update();
+  });
+
+  load();
+  update();
+  // Redraw once Inter has loaded, or the first frame uses the fallback font.
+  if (document.fonts && document.fonts.load){
+    Promise.all([document.fonts.load('800 78px Inter'), document.fonts.load('700 22px Inter')]).then(render, render);
+  }
+})();
+</script>

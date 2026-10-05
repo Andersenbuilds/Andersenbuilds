@@ -17,6 +17,7 @@ Brainstormed list of motion overlays for shorts and long-form, filtered through 
 
 - **Growth counter** (`templates/overlay-kit.html`) — ticks to a subscriber number with a drawing-in 7-day trend line.
 - **Join CTA** (`templates/overlay-kit.html`) — pulsing lower-third pill, "join the free list."
+- **Text hook overlay** (`templates/text-hook-overlay.html`) — frame-1 proof numbers + hook line + optional pictures, exported as a transparent PNG. From the @mino.mp4 breakdown in `docs/text-hook-research.md`.
 
 ## Worth building later, not urgent
 
